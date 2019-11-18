@@ -7,6 +7,7 @@ Created on Fri Oct 27 15:02:26 2017
 """
 import sys
 import operator
+import csv
 second_arg = sys.argv[1]
 third_arg = sys.argv[2]
 
@@ -79,24 +80,39 @@ def main(train_file_name, test_file_name):
                                 tag_tag_dic[previous_tag][tag] += 1
                                 total_count_tag_tag_dic[previous_tag] += 1
 
-    print(baseline_dic['race'])
+    # print(baseline_dic['race'])
 
 
     #test data to analyze
     #--------------------------------------read test file-----------------------
     #---------------------------------------------------------------------------
+    # with open("data/train.csv", "r") as csv_file:
+    #     rows = csv.reader(csv_file, delimiter = ",")
+    #     count = 0
+    #     for row in rows:
+    #         if (count >= 1 and count <= total_size):
+    #             target_target = (row[0], row[1], row[2])
+    #             insert_tasks(conn, target_query, target_target)
+    #             # insert_tasks(conn, other_target_query, other_target_target)
+    #             # insert_tasks(conn, hate_index_query, hate_index_target)
+    #         count += 1
+
+    
     word_vector = []
-    real_tag = []
-    with open(test_file_name, 'r') as f:
-        for line in f:
-            each_word = line.split()
-            temp_word = []
-            temp_tag = []
-            for i in range(len(each_word)):
-                temp_word.append(each_word[i].split('/')[0])
-                temp_tag.append(each_word[i].split('/')[1])
-            word_vector.append(temp_word)
-            real_tag.append(temp_tag)
+    # real_tag = []
+    with open(test_file_name, 'r') as csv_file:
+        rows = csv.reader(csv_file, delimiter= ",")
+        for row in rows:
+            word_vector.append(list(row[2].split()))
+        # for line in f:
+        #     each_word = line.split()
+        #     temp_word = []
+        #     temp_tag = []
+        #     for i in range(len(each_word)):
+        #         temp_word.append(each_word[i].split('/')[0])
+        #         temp_tag.append(each_word[i].split('/')[1])
+        #     word_vector.append(temp_word)
+        #     real_tag.append(temp_tag)
     
     predict_vector = []
     #----------------------------predict each word tag for each sentence---------------------
@@ -204,47 +220,40 @@ def main(train_file_name, test_file_name):
     print(key_number['WRB'])
     print(back_pointer[-6][30])
     '''
-    outfile = open("POS.test.out", "w")
+    outfile = open("results/POS.test.out", "w")
     correct_count = 0
     total_count = 0
     for i in range(len(predict_vector)):
         for j in range(len(predict_vector[i])):
             outfile.write(word_vector[i][j] +  "/" + predict_vector[i][j] + " ")
-            if predict_vector[i][j] == real_tag[i][j]:
-                correct_count += 1
-                total_count += 1
-            else:
-                total_count += 1
-                print("true_tag is: ", real_tag[i][j], " predict lag is: ", predict_vector[i][j], " and the word is: ", word_vector[i][j])
         outfile.write('\n')
-    accuracy = correct_count / total_count
-    print("Viterbi algorithm accuracy is: ", accuracy)
+    # accuracy = correct_count / total_count
+    # print("Viterbi algorithm accuracy is: ", accuracy)
     #-------------------------------------------------------------------------------------------------------------------
     #--------------------------------------Naive method to predict baseline accuracy------------------------------------
     #-------------------------------------------------------------------------------------------------------------------
-    baseline_method_tag_prediction = []
-    for i in range(len(word_vector)):
-        temp_tag = []
-        #print('here')
-        for j in range(len(word_vector[i])):
-            if word_vector[i][j] in baseline_dic:
-                temp_tag.append(max(baseline_dic[word_vector[i][j]], key = baseline_dic[word_vector[i][j]].get))
-            else:
-                temp_tag.append('NN')
-        #print(temp_tag)
-        baseline_method_tag_prediction.append(temp_tag)
+    # baseline_method_tag_prediction = []
+    # for i in range(len(word_vector)):
+    #     temp_tag = []
+    #     #print('here')
+    #     for j in range(len(word_vector[i])):
+    #         if word_vector[i][j] in baseline_dic:
+    #             temp_tag.append(max(baseline_dic[word_vector[i][j]], key = baseline_dic[word_vector[i][j]].get))
+    #         else:
+    #             temp_tag.append('NN')
+    #     baseline_method_tag_prediction.append(temp_tag)
     
-    baseline_method_count = 0
-    baseline_method_total_count = 0
-    for i in range(len(baseline_method_tag_prediction)):
-        for j in range(len(baseline_method_tag_prediction[i])):
-            if baseline_method_tag_prediction[i][j] == real_tag[i][j]:
-                baseline_method_count += 1
-                baseline_method_total_count += 1
-            else:
-                baseline_method_total_count += 1
-    accuracy2 = baseline_method_count / baseline_method_total_count
-    print("Baseline method naive method accuracy is: ", accuracy2)
+    # baseline_method_count = 0
+    # baseline_method_total_count = 0
+    # for i in range(len(baseline_method_tag_prediction)):
+    #     for j in range(len(baseline_method_tag_prediction[i])):
+    #         if baseline_method_tag_prediction[i][j] == real_tag[i][j]:
+    #             baseline_method_count += 1
+    #             baseline_method_total_count += 1
+    #         else:
+    #             baseline_method_total_count += 1
+    # accuracy2 = baseline_method_count / baseline_method_total_count
+    # print("Baseline method naive method accuracy is: ", accuracy2)
     
 if __name__ == '__main__':
     main(second_arg, third_arg)

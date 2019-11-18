@@ -4,7 +4,7 @@ import csv
 db_file = "var/NLP.sqlite3"
 conn = create_connection(db_file)
 target_query = "insert into target(id, target, comment_text) VALUES(?, ? ,?)"
-total_size = 100000
+total_size = 10000
 
 with open("data/train.csv", "r") as csv_file:
     rows = csv.reader(csv_file, delimiter = ",")
